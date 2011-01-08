@@ -27,33 +27,48 @@
 if ARGV.empty? then exit end
 
 require 'net/http'
-require 'zlib'
 require 'open-uri'
 
 # These are local files
 prefix = "dat/"
 file_names    = "name.dat.txt"
+$file_names   = "name.dat.txt"
 file_surnames = "surnames.dat.txt"
+$file_surnames= "surnames.dat.txt"
 file_roads    = "roads.dat.txt"
 file_words    = "words.dat.txt"
 
 # These are obtainable foreign files
-http_names    = ""
-http_surnames = ""
-http_roads    = ""
-http_words    = "http://www.mieliestronk.com/corncob_lowercase.zip"
+$http_names_m  = "http://www.census.gov/genealogy/names/dist.male.first"
+$http_names_f  = "http://www.census.gov/genealogy/names/dist.female.first"
+$http_surnames = "http://www.census.gov/genealogy/names/dist.all.last"
+$http_roads    = ""
+$http_words    = "http://www.mieliestronk.com/corncob_lowercase.zip"
+
+# XXX XXX XXX XXX NEED TO CHANGE ALL GLOBARL VARST TO GLOBAL!
 
 def fetch(num)
   case num
     when 0 
-
+      print "Fetching names: [BUSY]"
+      `wget --quiet -O ./dat/males #{$http_names_m}`
+      `wget --quiet -O ./dat/femal #{$http_names_f}`
+      `cd dat && ( cat males && cat femal ) | awk '{print $1}' > #{$file_names}`
+      `cd dat && rm males femal`
+      print "\b\b\b\b\b\b[DONE]\n"
     when 1
-    when 2
-    when 3
-      @uri = http_words
-      @src = open(uri)
-      @gzp = ZLib::GzipReader.new(@src)
-      @res = @gzp.read
+      print "FetchingLnames: [BUSY]"
+      `wget --quiet -O ./dat/last #{$http_surnames}`
+      `cd dat && cat last | awk '{print $1}' > #{$file_surnames}`
+      `rm ./dat/last`
+      print "\b\b\b\b\b\b[DONE]\n"
+    when 2 #download corncob
+      print "Fetching words: [BUSY]"
+      `wget --quiet -O ./dat/cc.zip #{$http_words}`
+      `cd dat && unzip cc.zip`
+      `cd dat && iconv -f utf8 -t ascii corncob_lowercase.txt > words.dat.txt`
+      `rm ./dat/cc.zip`
+      print "\b\b\b\b\b\b[DONE]\n"
   end
 end
 
@@ -64,36 +79,47 @@ if ARGV[0].downcase == "help"
   exit
 end
 
-if !File.exists?(prefix + file_names)    then 
-  puts "The #{file_names} could not be found. Should I fetch it? [Y/n] "
-  c=gets 
+if !File.exists?(prefix + file_names)
+  print "The #{file_names} could not be found. Should I fetch it? [Y/n] : "
+  c=$stdin.gets.chomp
   if c=='y'
     fetch(0) 
   end 
 end
-if !File.exists?(prefix + file_surnames) then puts "The #{file_surnames} could not be found. Should I fetch it? [Y/n]"; c=gets if c=='y' then fetch(1) end end
-if !File.exists?(prefix + file_roads)    then puts "The #{file_roads} could not be found. Should I fetch it? [Y/n]";    c=gets if c=='y' then fetch(2) end end
-if !File.exists?(prefix + file_words)    then puts "The #{file_words} could not be found. Should I fetch it? [Y/n]";    c=gets if c=='y' then fetch(3) end end
+
+if !File.exists?(prefix + file_surnames) 
+  print "The #{file_surnames} could not be found. Should I fetch it? [Y/n] : " 
+  c=$stdin.gets.chomp
+  if c=='y'
+    fetch(1) 
+  end 
+end
+
+if !File.exists?(prefix + file_words) 
+  print "The #{file_words} could not be found. Should I fetch it? [Y/n] : "
+  c=$stdin.gets.chomp 
+  if c=='y'
+    fetch(2) 
+  end 
+end
 
 fnames    = File.open("#{prefix}name.dat.txt", "r") 
 fsurnames = File.open("#{prefix}surnames.dat.txt", "r")
-froads    = File.open("#{prefix}roads.dat.txt", "r")   
-words     = File.open("#{prefix}words.dat.txt", "r")
-id = Array.new
-
+fwords    = File.open("#{prefix}words.dat.txt", "r") # lol, fwords
+id = Array.new # TODO might have to go
 
 # We just put these here because we don't want to load the files if the arguments are entered wrong
 
 names    =    fnames.readlines if ARGV.include?("name")    # Here for optimization
 surnames = fsurnames.readlines if ARGV.include?("surname") # Here for optimization
-roads    =    froads.readlines if ARGV.include?("address") # Here for optimization
+words    =    fwords.readlines if ARGV.include?("address") or ARGV.include?("word")
 
 # Normalization of data here. We remove the newlines, and make sure that each
 # name is capitalized properly.
 
 names.each_index    { |x| names[x]    = names[x].gsub("\n", "").capitalize  }   if ARGV.include?("name")
 surnames.each_index { |x| surnames[x] = surnames[x].gsub("\n", "").capitalize } if ARGV.include?("surname")
-roads.each_index    { |x| roads[x]    = roads[x].gsub("\n", "") }               if ARGV.include?("address")
+words.each_index    { |x| words[x]    = words[x].gsub("\r\n", "")} if ARGV.include?("word") or ARGV.include?("address")
 
 # Now just an extra rule for the delimiters...
 
@@ -112,7 +138,12 @@ ARGV[0].to_i.times {
     elsif ARGV[x] == "surname"
       print surnames[rand(surnames.size)]
     elsif ARGV[x] == "address"
-      print roads[rand(roads.size)]
+      print words[rand(words.size)].capitalize, " ", words[rand(words.size)].capitalize, " "
+      if rand(2) == 0
+        print "Ave."
+      else
+        print "St."
+      end
     elsif ARGV[x] == "name"
       print names[rand(names.size)]
     elsif ARGV[x] == "post"
