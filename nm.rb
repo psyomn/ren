@@ -112,14 +112,14 @@ id = Array.new # TODO might have to go
 
 names    =    fnames.readlines if ARGV.include?("name")    # Here for optimization
 surnames = fsurnames.readlines if ARGV.include?("surname") # Here for optimization
-words    =    fwords.readlines if ARGV.include?("address") or ARGV.include?("word")
+words    =    fwords.readlines if ARGV.include?("address") or ARGV.grep /word/
 
 # Normalization of data here. We remove the newlines, and make sure that each
 # name is capitalized properly.
 
 names.each_index    { |x| names[x]    = names[x].gsub("\n", "").capitalize  }   if ARGV.include?("name")
 surnames.each_index { |x| surnames[x] = surnames[x].gsub("\n", "").capitalize } if ARGV.include?("surname")
-words.each_index    { |x| words[x]    = words[x].gsub("\r\n", "")} if ARGV.include?("word") or ARGV.include?("address")
+words.each_index    { |x| words[x]    = words[x].gsub("\r\n", "")} if ARGV.grep /word/ or ARGV.include?("address")
 
 # Now just an extra rule for the delimiters...
 
@@ -152,7 +152,11 @@ ARGV[0].to_i.times {
       print rand(40) + 14
     elsif ARGV[x] == "phone"
       print (100+rand(899)), "-", "%04d" % rand(9999)
-    end # end the token/argv checking
+    elsif ARGV[x] =~ /word/
+      w = ARGV[x]
+      n = w.to_i
+      (n == 0 ? 1 : n).times{ print words[rand(words.length)], " " }
+    end 
     
     if x < ARGV.length - 1 then print ARGV[1] end # Print the delimiter to separate the fields
   
