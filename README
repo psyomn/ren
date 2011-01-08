@@ -1,0 +1,2 @@
+This is a script that is supposed to spout out need information in order to populate a database en mass.
+Currently it does not handle uniqueness in certain fields (for example you might have a case where someone has the same phone number).
