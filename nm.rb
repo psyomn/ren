@@ -21,6 +21,14 @@
    note delimiter for cells is #
    delimiter for rows is \n
 
+   TODO
+   Some commands that might be worth implementing:
+     o list  : for a list of values you might only want (eg F/M etc)
+     o range : for an int range. This should have possibilities of specifying
+               one number x so it's 0 -> x, and two for x -> y
+	       (so this could handle years for example, or salaries)
+     o Date  : something closer to fit in SQL kind of query of "DATE" type
+
 =end
 
 # Pre-script execution checks
@@ -42,7 +50,7 @@ file_words    = "words.dat.txt"
 $http_names_m  = "http://www.census.gov/genealogy/names/dist.male.first"
 $http_names_f  = "http://www.census.gov/genealogy/names/dist.female.first"
 $http_surnames = "http://www.census.gov/genealogy/names/dist.all.last"
-$http_roads    = ""
+$http_roads    = "" # XXX This should go away in the future
 $http_words    = "http://www.mieliestronk.com/corncob_lowercase.zip"
 
 # XXX XXX XXX XXX NEED TO CHANGE ALL GLOBARL VARST TO GLOBAL!
@@ -109,7 +117,8 @@ fwords    = File.open("#{prefix}words.dat.txt", "r") # lol, fwords
 id = Array.new # TODO might have to go
 
 # We just put these here because we don't want to load the files if the arguments are entered wrong
-
+# TODO Should I ever choose to optimize this, then it would be a wise idea to read the file in chunks
+#      rather than in lines...
 names    =    fnames.readlines if ARGV.include?("name")    # Here for optimization
 surnames = fsurnames.readlines if ARGV.include?("surname") # Here for optimization
 words    =    fwords.readlines if ARGV.include?("address") or ARGV.grep /word/
