@@ -51,21 +51,18 @@ rangeHashID    = 0        # the hashid to look for later
 
 # These are local files
 prefix = "dat/"
-file_names     = "name.dat.txt"
-$file_names    = "name.dat.txt"
-file_surnames  = "surnames.dat.txt"
-$file_surnames = "surnames.dat.txt"
-file_roads     = "roads.dat.txt"
-file_words     = "words.dat.txt"
+$file_names     = "name.dat.txt"
+$file_surnames  = "surnames.dat.txt"
+$file_words     = "words.dat.txt"
 
 # These are obtainable foreign files
 $http_names_m  = "http://www.census.gov/genealogy/names/dist.male.first"
 $http_names_f  = "http://www.census.gov/genealogy/names/dist.female.first"
 $http_surnames = "http://www.census.gov/genealogy/names/dist.all.last"
-$http_roads    = "" # XXX This should go away in the future
 $http_words    = "http://www.mieliestronk.com/corncob_lowercase.zip"
 
-# XXX XXX XXX XXX NEED TO CHANGE ALL GLOBARL VARST TO GLOBAL!
+# Where the final result will be stored
+$final_result = ""
 
 ##
 ## End Important Variables
@@ -104,24 +101,24 @@ if ARGV[0].downcase == "help"
   exit
 end
 
-if !File.exists?(prefix + file_names)
-  print "The #{file_names} could not be found. Should I fetch it? [Y/n] : "
+if !File.exists?(prefix + $file_names)
+  print "The #{$file_names} could not be found. Should I fetch it? [Y/n] : "
   c=$stdin.gets.chomp
   if c=='y'
     fetch(0) 
   end 
 end
 
-if !File.exists?(prefix + file_surnames) 
-  print "The #{file_surnames} could not be found. Should I fetch it? [Y/n] : " 
+if !File.exists?(prefix + $file_surnames) 
+  print "The #{$file_surnames} could not be found. Should I fetch it? [Y/n] : " 
   c=$stdin.gets.chomp
   if c=='y'
     fetch(1) 
   end 
 end
 
-if !File.exists?(prefix + file_words) 
-  print "The #{file_words} could not be found. Should I fetch it? [Y/n] : "
+if !File.exists?(prefix + $file_words) 
+  print "The #{$file_words} could not be found. Should I fetch it? [Y/n] : "
   c=$stdin.gets.chomp 
   if c=='y'
     fetch(2) 
@@ -133,9 +130,9 @@ end
 ## start executing the real stuff. (read files, generate stuff etc)
 ##
 
-fnames    = File.open("#{prefix}name.dat.txt", "r") 
-fsurnames = File.open("#{prefix}surnames.dat.txt", "r")
-fwords    = File.open("#{prefix}words.dat.txt", "r") # lol, fwords
+fnames    = File.open("#{prefix}#{$file_names}", "r") 
+fsurnames = File.open("#{prefix}#{$file_surnames}", "r")
+fwords    = File.open("#{prefix}#{$file_words}", "r") # lol, fwords
 id = Array.new # TODO might have to go
 
 # We just put these here because we don't want to load the files if the arguments are entered wrong
@@ -188,15 +185,23 @@ ARGV[0].to_i.times {
   
   if x > 2 then 
     if ARGV[x] == "id"
-      print rand(8000000) + 1000000
+      tmpid = (rand(8000000) + 1000000).to_s
+      $final_result += tmpid
+      print tmpid
     elsif ARGV[x] == "surname"
       print surnames[rand(surnames.size)]
     elsif ARGV[x] == "address"
       print words[rand(words.size)].capitalize, " ", words[rand(words.size)].capitalize, " "
-      if rand(2) == 0
-        print "Ave."
-      else
-        print "St."
+      case rand(9)
+        when 0 then print "Ave."
+        when 1 then print "St."
+        when 2 then print "Way"
+	when 3 then print "Cir"
+	when 4 then print "Dr"
+	when 5 then print "Rd"
+	when 6 then print "Ct"
+	when 7 then print "Trl"
+	when 8 then print "Blvd"
       end
     elsif ARGV[x] == "name"
       print names[rand(names.size)]
@@ -228,13 +233,20 @@ ARGV[0].to_i.times {
    
     if x < ARGV.length - 1
         print ARGV[1]
+	$final_result += ARGV[1]
     end # Print the delimiter to separate the fields
     if nodelim == true
       print "\b\b"
+      # There's something wrong with this
+      ARGV[1].length.times { $final_result.chop! } 
+      nodelim = false
     end
   end # end checking if these are not delimiters or amount to generate...
   }
   
   print ARGV[2] # Print the delimiter to separate the rows
-
+  $final_result += ARGV[2]
 }
+
+print "\n\n---- CONTENTS of FINALRESULT ----\n\n", $final_result if ARGV.grep /debug/
+print "ARGV[1] size is : #{ARGV[1].length}"if ARGV.grep /debug/
