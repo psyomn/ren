@@ -23,18 +23,29 @@
 
    TODO
    Some commands that might be worth implementing:
+     o TIMES   : This will be a command that preparses the given commands automatically
+                 The user can say for example 5TIMES list=g,c,t,a and that would make
+		 the script preparse the command to list=g,c,t,a list=g,c,t,a list= ...
+
+                 This might take some time, but we'll see when I implement it.
+
      o Shell   : in the future, see how much time it would take in order to turn
                  this program into something which acts more like a shell...
    DONE 
      o Back    : option to print backspace in order to merge values...
+
+                   use is back (eg: id back back back id)
+
      o range   : for an int range. This should have possibilities of specifying
                  one number x so it's 0 -> x, and two for x -> y
 	         (so this could handle years for example, or salaries)
+		     
+		   use is  20range20 nodelim 30range50 -100range100
+
      o list    : for a list of values you might only want (eg F/M etc, eg A,B,C,...)
      o nodelim : Special rule for when you want to stick two things together
                  for example year generation could be of the form
 		     
-		     20range20 nodelim 30range50
 =end
 
 # Pre-script execution check
@@ -97,8 +108,23 @@ end
 # If the user needs help...
 if ARGV[0].downcase == "help"
   puts "Command format: "
-  puts "  ruberate NUM delim1 delim2 [name|surname|id|address|age|post]*"
-  exit
+  puts " \nnm.rb NUM delim1 delim2 [ name | surname | id | address | age | post | phone | word | XrangeY | list=a,b,c,... | back | nodelim  ]*\n\n"
+  puts " - - "
+  puts " - name    : random name "
+  puts " - surname : random surname "
+  puts " - id      : random 7 digit number "
+  puts " - address : random address (Note, this just takes two words, and adds ave, st. etc at the end)"
+  puts " - age     : random age from 14->54"
+  puts " - phone   : random phone of form XXX-XXXX "
+  puts " - word    : random word. You can call word many times in order to make the program generate a random nonsensical comment"
+  puts " - range   : an interger of range X to Y "
+  puts " - list    : random choices from a list of your choice. Eg: list=a,b,c,d"
+  puts " - back    : this removes 1 space from the previous output. Eg: name back back 10range20 will generate a name with a few removed chars, and a number"
+  puts " - nodelim : this ignores putting a delimiter. You can use this to combine different commands: 100range200 nodelim 300range400"
+  puts " - -"
+  puts "\n --== author: psyomn, 2011 ==-- \n"
+  puts "     -> Time to Annihilation: " + ( Time.utc(2011, "dec", 31, 23,59,59).to_i - Time.now.to_i ).to_s + " seconds remaining"
+  exit 
 end
 
 if !File.exists?(prefix + $file_names)
@@ -187,66 +213,63 @@ ARGV[0].to_i.times {
     if ARGV[x] == "id"
       tmpid = (rand(8000000) + 1000000).to_s
       $final_result += tmpid
-      print tmpid
     elsif ARGV[x] == "surname"
-      print surnames[rand(surnames.size)]
+      tmpst = surnames[rand(surnames.size)]
+      $final_result += tmpst
     elsif ARGV[x] == "address"
-      print words[rand(words.size)].capitalize, " ", words[rand(words.size)].capitalize, " "
+      tmpst = words[rand(words.size)].capitalize + " " + words[rand(words.size)].capitalize + " "
       case rand(9)
-        when 0 then print "Ave."
-        when 1 then print "St."
-        when 2 then print "Way"
-	when 3 then print "Cir"
-	when 4 then print "Dr"
-	when 5 then print "Rd"
-	when 6 then print "Ct"
-	when 7 then print "Trl"
-	when 8 then print "Blvd"
+        when 0 then tmpst += "Ave."
+        when 1 then tmpst += "St."
+        when 2 then tmpst += "Way"
+	when 3 then tmpst += "Cir"
+	when 4 then tmpst += "Dr"
+	when 5 then tmpst += "Rd"
+	when 6 then tmpst += "Ct"
+	when 7 then tmpst += "Trl"
+	when 8 then tmpst += "Blvd"
       end
+      $final_result += tmpst
     elsif ARGV[x] == "name"
-      print names[rand(names.size)]
+      $final_result += names[rand(names.size)]
     elsif ARGV[x] == "post"
-      print (65 + rand(25)).chr , rand(9) , (65 + rand(25)).chr , rand(9) , (65 + rand(25)).chr , rand(9)
+      $final_result += (65 + rand(25)).chr + rand(9).to_s + (65 + rand(25)).chr + rand(9).to_s + (65 + rand(25)).chr + rand(9).to_s
     elsif ARGV[x] == "age"
-      print rand(40) + 14
+      $final_result += (rand(40) + 14).to_s
     elsif ARGV[x] == "phone"
-      print (100+rand(899)), "-", "%04d" % rand(9999)
+      $final_result += (100+rand(899)).to_s + "-" + ("%04d" % rand(9999))
     elsif ARGV[x] =~ /word/
       w = ARGV[x]
       n = w.to_i
-      (n == 0 ? 1 : n).times{ print words[rand(words.length)], " " }
+      (n == 0 ? 1 : n).times{ $final_result += words[rand(words.length)] + " " }
     elsif ARGV[x] =~ /range/
       expression = rangeHash[ARGV[x]] 
       exp = expression.split('X')
-      print (exp[0].to_i..exp[1].to_i).to_a.sample
+      $final_result += (exp[0].to_i..exp[1].to_i).to_a.sample.to_s
     elsif ARGV[x] =~ /list/
       l = ARGV[x]
       l = l.gsub(/list/, '')
       l = l.gsub(/=/, '')
       la= l.split(',')
-      print (la[rand(la.length)])
+      $final_result += la.sample
     elsif ARGV[x] == "back"
-      print "\b\b"
+      2.times { $final_result.chop! }
     elsif ARGV[x] == "nodelim"
       nodelim = true
     end 
    
     if x < ARGV.length - 1
-        print ARGV[1]
 	$final_result += ARGV[1]
     end # Print the delimiter to separate the fields
     if nodelim == true
-      print "\b\b"
       # There's something wrong with this
-      ARGV[1].length.times { $final_result.chop! } 
+      ( ARGV[1].length + 1 ).times { $final_result.chop! } 
       nodelim = false
     end
   end # end checking if these are not delimiters or amount to generate...
   }
   
-  print ARGV[2] # Print the delimiter to separate the rows
   $final_result += ARGV[2]
 }
 
-print "\n\n---- CONTENTS of FINALRESULT ----\n\n", $final_result if ARGV.grep /debug/
-print "ARGV[1] size is : #{ARGV[1].length}"if ARGV.grep /debug/
+print $final_result
