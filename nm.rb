@@ -5,6 +5,8 @@
   contact: lethaljellybean@gmail.com
   contact: psyomn@xenagoras.net
 
+  Test?
+
   This is a simple script to generate information to populate our database.
  
   This script aims to be flexible, versatile and reusable. We'll see how
