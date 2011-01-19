@@ -25,28 +25,30 @@
 
    TODO
    Some commands that might be worth implementing:
-     o TIMES   : This will be a command that preparses the given commands automatically
-                 The user can say for example 5TIMES list=g,c,t,a and that would make
-		 the script preparse the command to list=g,c,t,a list=g,c,t,a list= ...
+     o alphabetic : return random a-z character 
+     o ALPHABETIC : return random A-Z character
+     o TIMES      : This will be a command that preparses the given commands automatically
+                    The user can say for example 5TIMES list=g,c,t,a and that would make
+		    the script preparse the command to list=g,c,t,a list=g,c,t,a list= ...
 
-                 This might take some time, but we'll see when I implement it.
+                      This might take some time, but we'll see when I implement it.
 
-     o Shell   : in the future, see how much time it would take in order to turn
-                 this program into something which acts more like a shell...
+     o Shell      : in the future, see how much time it would take in order to turn
+                    this program into something which acts more like a shell...
    DONE 
-     o Back    : option to print backspace in order to merge values...
+     o Back       : option to print backspace in order to merge values...
 
-                   use is back (eg: id back back back id)
+                      use is back (eg: id back back back id)
 
-     o range   : for an int range. This should have possibilities of specifying
-                 one number x so it's 0 -> x, and two for x -> y
-	         (so this could handle years for example, or salaries)
+     o range      : for an int range. This should have possibilities of specifying
+                    one number x so it's 0 -> x, and two for x -> y
+	            (so this could handle years for example, or salaries)
 		     
-		   use is  20range20 nodelim 30range50 -100range100
+		      use is  20range20 nodelim 30range50 -100range100
 
-     o list    : for a list of values you might only want (eg F/M etc, eg A,B,C,...)
-     o nodelim : Special rule for when you want to stick two things together
-                 for example year generation could be of the form
+     o list       : for a list of values you might only want (eg F/M etc, eg A,B,C,...)
+     o nodelim    : Special rule for when you want to stick two things together
+                    for example year generation could be of the form
 		     
 =end
 
