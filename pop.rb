@@ -26,6 +26,14 @@ inputf = ""
 delim1 = "" # delimiter for each field
 delim2 = "" # delimiter for each row/tuple
 
+if ARGV[0] == 'd'
+  puts "*************************************************" 
+  puts "* DEBUGGING MODE!" 
+  puts "* All the sql queries will be written to log.sql" 
+  puts "*************************************************"
+  fw = File.new("log.sql", 'w')
+end
+
 print "Database Populating tool\n"
 
 puts "You will be prompted to enter certain information "
@@ -36,6 +44,7 @@ print "  - password : "
 pass   = $stdin.gets.chomp
 print "  - host     : "
 host   = $stdin.gets.chomp
+
 print "  - dbname   : " 
 dbname = $stdin.gets.chomp 
 print "  - table    : "
@@ -84,6 +93,9 @@ con.select_db(dbname)
     # This line is only printed if user specifies the D_ebugging ARGV
     puts "INSERT INTO #{table} (#{attri}) VALUES (#{u})" if ARGV[0] == 'd'
     
+    if ARGV[0] == 'd'
+      fw.puts "INSERT INTO #{table} (#{attri}) VALUES (#{u})"
+    end
     con.query("INSERT INTO #{table} (#{attri}) VALUES (#{u})")  
   }
 con.close

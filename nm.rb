@@ -5,8 +5,6 @@
   contact: lethaljellybean@gmail.com
   contact: psyomn@xenagoras.net
 
-  Test?
-
   This is a simple script to generate information to populate our database.
  
   This script aims to be flexible, versatile and reusable. We'll see how
@@ -14,7 +12,7 @@
 
   You call the script with these arguments:
 
-  ruberate 200 <delim1> <delim2>  n s id 
+  ./nm 200 <delim1> <delim2>  n s id 
 
   <delim1> is the delimiter between fields (Name#Surname#...)
   <delim2> is the delimiter between each row of data
@@ -25,17 +23,19 @@
 
    TODO
    Some commands that might be worth implementing:
-     o alphabetic : return random a-z character 
-     o ALPHABETIC : return random A-Z character
      o TIMES      : This will be a command that preparses the given commands automatically
                     The user can say for example 5TIMES list=g,c,t,a and that would make
 		    the script preparse the command to list=g,c,t,a list=g,c,t,a list= ...
 
                       This might take some time, but we'll see when I implement it.
-
+     o ID         : must be a unique id
      o Shell      : in the future, see how much time it would take in order to turn
                     this program into something which acts more like a shell...
    DONE 
+     o alpha      : return random a-z character 
+     o ALPHA      : return random A-Z character
+     o num        : return random number 0->9
+     o man        : return a letter (simple, but needed) (or a whole word)
      o Back       : option to print backspace in order to merge values...
 
                       use is back (eg: id back back back id)
@@ -52,9 +52,13 @@
 		     
 =end
 
-# Pre-script execution check
-# If nothing specified, stab user in the face, multiple times.
+# Pre-script executions check
+#   If nothing specified, stab user in the face, multiple times.
 if ARGV.empty? then exit end
+
+##
+## Check for special fields such as the XTIMES
+##
 
 ##
 ## Start important variables
@@ -78,11 +82,12 @@ $http_words    = "http://www.mieliestronk.com/corncob_lowercase.zip"
 
 # Where the final result will be stored
 $final_result = ""
-
+nodelim       = false # if the user wishes no delimiter between parameters
 ##
 ## End Important Variables
 ##
 
+## TODO these have to go in the future...
 def fetch(num)
   case num
     when 0 
@@ -102,9 +107,8 @@ def fetch(num)
       print "Fetching words: [BUSY]"
       `wget --quiet -O ./dat/cc.zip #{$http_words}`
       `cd dat && unzip cc.zip`
-      `cd dat && iconv -f utf8 -t ascii corncob_lowercase.txt > words.dat.txt`
+      `cd dat && mv corncob_lowercase.txt words.dat.txt`
       `rm ./dat/cc.zip`
-      `rm ./dat/corncob_lowercase.txt`
       print "\b\b\b\b\b\b[DONE]\n"
   end
 end
@@ -122,12 +126,20 @@ if ARGV[0].downcase == "help"
   puts " - phone   : random phone of form XXX-XXXX "
   puts " - word    : random word. You can call word many times in order to make the program generate a random nonsensical comment"
   puts " - range   : an interger of range X to Y "
+  puts " -             use: 30range50 will yield a number from 30 to 50"
   puts " - list    : random choices from a list of your choice. Eg: list=a,b,c,d"
-  puts " - back    : this removes 1 space from the previous output. Eg: name back back 10range20 will generate a name with a few removed chars, and a number"
+  puts " - back    : this removes 1 space from the previous output. 
+                        Eg: name back back 10range20 will generate a name with a few removed chars, and a number
+			You might want to think very well before you choose to use this as it may yield odd
+			results"
+  puts " - num     : return a random number from 0 to 9"
+  puts " - alpha   : random character a to z" 
+  puts " - ALPHA   : random character A to Z"
+  puts " - man     : manual entry of whatever you like"
   puts " - nodelim : this ignores putting a delimiter. You can use this to combine different commands: 100range200 nodelim 300range400"
   puts " - -"
-  puts "\n --== author: psyomn, 2011 ==-- \n"
-  puts "     -> Time to Annihilation: " + ( Time.utc(2011, "dec", 31, 23,59,59).to_i - Time.now.to_i ).to_s + " seconds remaining"
+  puts "\n --== author : psyomn, 2011 ==-- \n"
+  puts " Time to Annihilation: " + ( Time.utc(2011, "dec", 31, 23,59,59).to_i - Time.now.to_i ).to_s + " seconds remaining"
   exit 
 end
 
@@ -237,16 +249,22 @@ ARGV[0].to_i.times {
     elsif ARGV[x] == "name"
       $final_result += names[rand(names.size)]
     elsif ARGV[x] == "post"
-      $final_result += (65 + rand(25)).chr + rand(9).to_s + (65 + rand(25)).chr + rand(9).to_s + (65 + rand(25)).chr + rand(9).to_s
+      $final_result += (65 + rand(26)).chr + rand(9).to_s + (65 + rand(26)).chr + rand(9).to_s + (65 + rand(26)).chr + rand(9).to_s
     elsif ARGV[x] == "age"
       $final_result += (rand(40) + 14).to_s
     elsif ARGV[x] == "phone"
       $final_result += (100+rand(899)).to_s + "-" + ("%04d" % rand(9999))
+    elsif ARGV[x] == "alpha"
+      $final_result += (97 + rand(26)).chr
+    elsif ARGV[x] == "ALPHA"
+      $final_result += (65 + rand(26)).chr
+    elsif ARGV[x] == "num"
+      $final_result += (rand(10)).to_s # 0 -> 9
     elsif ARGV[x] =~ /word/
       w = ARGV[x]
       n = w.to_i
       (n == 0 ? 1 : n).times{ $final_result += words[rand(words.length)] + " " }
-    elsif ARGV[x] =~ /range/
+    elsif ARGV[x] =~ /range/ # TODO operation time sucks ass. Need to improve
       expression = rangeHash[ARGV[x]] 
       exp = expression.split('X')
       $final_result += (exp[0].to_i..exp[1].to_i).to_a.sample.to_s
@@ -256,6 +274,11 @@ ARGV[0].to_i.times {
       l = l.gsub(/=/, '')
       la= l.split(',')
       $final_result += la.sample
+    elsif ARGV[x] =~ /man/
+      l = ARGV[x]
+      l = l.gsub(/man/, '')
+      l = l.gsub(/=/, '')
+      $final_result += l
     elsif ARGV[x] == "back"
       2.times { $final_result.chop! }
     elsif ARGV[x] == "nodelim"
@@ -274,6 +297,7 @@ ARGV[0].to_i.times {
   }
   
   $final_result += ARGV[2]
+  
 }
 
 print $final_result
