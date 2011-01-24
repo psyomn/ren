@@ -22,10 +22,11 @@
    delimiter for rows is \n
 
    TODO
-   Some commands that might be worth implementing:
+   Some commands that might be worth implementing: 
+     o Space      : a command to create a blank space
      o TIMES      : This will be a command that preparses the given commands automatically
                     The user can say for example 5TIMES list=g,c,t,a and that would make
-		    the script preparse the command to list=g,c,t,a list=g,c,t,a list= ...
+                  the script preparse the command to list=g,c,t,a list=g,c,t,a list= ...
 
                       This might take some time, but we'll see when I implement it.
      o ID         : must be a unique id
@@ -42,14 +43,17 @@
 
      o range      : for an int range. This should have possibilities of specifying
                     one number x so it's 0 -> x, and two for x -> y
-	            (so this could handle years for example, or salaries)
-		     
-		      use is  20range20 nodelim 30range50 -100range100
+                   (so this could handle years for example, or salaries)
+                   
+                    use is  20range20 nodelim 30range50 -100range100
 
      o list       : for a list of values you might only want (eg F/M etc, eg A,B,C,...)
      o nodelim    : Special rule for when you want to stick two things together
                     for example year generation could be of the form
-		     
+                  
+  -----------------------------------------------------------------------------
+
+  Special thanks to Paul Smelser for suggestions / breaking the script!
 =end
 
 # Pre-script executions check
@@ -113,6 +117,7 @@ def fetch(num)
   end
 end
 
+# TODO make the box dynamically be generated... hard-printing is a little silly.
 # If the user needs help...
 if ARGV[0].downcase == "help"
   puts "Command format: "
@@ -126,12 +131,12 @@ if ARGV[0].downcase == "help"
   puts " - phone   : random phone of form XXX-XXXX "
   puts " - word    : random word. You can call word many times in order to make the program generate a random nonsensical comment"
   puts " - range   : an interger of range X to Y "
-  puts " -             use: 30range50 will yield a number from 30 to 50"
+  puts " -              use: 30range50 will yield a number from 30 to 50"
   puts " - list    : random choices from a list of your choice. Eg: list=a,b,c,d"
   puts " - back    : this removes 1 space from the previous output. 
                         Eg: name back back 10range20 will generate a name with a few removed chars, and a number
-			You might want to think very well before you choose to use this as it may yield odd
-			results"
+                     You might want to think very well before you choose to use this as it may yield odd
+                     results"
   puts " - num     : return a random number from 0 to 9"
   puts " - alpha   : random character a to z" 
   puts " - ALPHA   : random character A to Z"
@@ -209,17 +214,22 @@ ARGV.each_index { |d|
     ARGV[d] = "range" + rangeHashID.to_s
     rangeHashID += 1
 
-    tx = r[0].to_i
-    ty = r[1].to_i
+    x = [r[0].to_i, r[1].to_i].max
+    y = [r[0].to_i, r[1].to_i].min
+   
+    # we set y as the value which will be from 0 -> y
+    # we set x as our offset
 
-    x = [tx, ty].max
-    y = [tx, ty].min
-    
+    x = x - y
+
     rangeHash[ARGV[d]] = y.to_s + "X" + x.to_s # We choose X as a delimiter
   end
 }
 
-# all the options here
+# TODO 
+#  Here, I want to change everything to a switch.
+#  in a future release the ridiculous if statements will
+#  go away.
 
 ARGV[0].to_i.times {
 
@@ -238,12 +248,12 @@ ARGV[0].to_i.times {
         when 0 then tmpst += "Ave."
         when 1 then tmpst += "St."
         when 2 then tmpst += "Way"
-	when 3 then tmpst += "Cir"
-	when 4 then tmpst += "Dr"
-	when 5 then tmpst += "Rd"
-	when 6 then tmpst += "Ct"
-	when 7 then tmpst += "Trl"
-	when 8 then tmpst += "Blvd"
+        when 3 then tmpst += "Cir"
+        when 4 then tmpst += "Dr"
+        when 5 then tmpst += "Rd"
+        when 6 then tmpst += "Ct"
+        when 7 then tmpst += "Trl"
+        when 8 then tmpst += "Blvd"
       end
       $final_result += tmpst
     elsif ARGV[x] == "name"
@@ -267,7 +277,7 @@ ARGV[0].to_i.times {
     elsif ARGV[x] =~ /range/ # TODO operation time sucks ass. Need to improve
       expression = rangeHash[ARGV[x]] 
       exp = expression.split('X')
-      $final_result += (exp[0].to_i..exp[1].to_i).to_a.sample.to_s
+      $final_result += (rand(exp[1].to_i + 1) + exp[0].to_i).to_s
     elsif ARGV[x] =~ /list/
       l = ARGV[x]
       l = l.gsub(/list/, '')
@@ -286,7 +296,7 @@ ARGV[0].to_i.times {
     end 
    
     if x < ARGV.length - 1
-	$final_result += ARGV[1]
+       $final_result += ARGV[1]
     end # Print the delimiter to separate the fields
     if nodelim == true
       # There's something wrong with this
