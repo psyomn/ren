@@ -94,7 +94,7 @@ con.select_db(dbname)
     puts "INSERT INTO #{table} (#{attri}) VALUES (#{u})" if ARGV[0] == 'd'
     
     if ARGV[0] == 'd'
-      fw.puts "INSERT INTO #{table} (#{attri}) VALUES (#{u})"
+      fw.puts "INSERT INTO #{table} (#{attri}) VALUES (#{u});"
     end
     con.query("INSERT INTO #{table} (#{attri}) VALUES (#{u})")  
   }

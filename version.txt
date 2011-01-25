@@ -1,0 +1,34 @@
+Version Log of Solonely
+=============================================
+Solonelys Reasoning
+---------------------------------------------
+Well, I initially was writing this for a 
+class I had in Software Process. However
+afterwards I slowly started adding more and
+more features and found that I got addicted
+and found really amusing generating lots of 
+random information.
+
+This was initially meant to be a quick 
+script to solve a specific problem, so there
+will be rewrites.
+
+In the future I wish for this script to be
+versatile enough so that other people who
+wish to use it in order to poppulate 
+databases do not have the same trouble as I
+have
+
+=============================================
+Tue Jan 25 06:31:26 EST 2011
+version 0.1 - Features, bugfixes
+---------------------------------------------
+  o Script creates dat/ if not present
+  o code clutter removed (elsif -> case/when)
+  o added id functionality
+  o range operation improvement
+  o mysql date implementation
+  o mysql time implementation
+  o added "version" command :p
+  o got rid of some warnings
+  o other trivial bugfixes

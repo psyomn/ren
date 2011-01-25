@@ -12,11 +12,12 @@ How to begin generation
 -------------------------------
 Make sure that you have a dat/ fodler in the main directory solonely/ 
 That is: solonely/dat/
+The script should take care of directory creation if no dat/ is found.
 
 Currently the script needs to use wget in order to grab some files from
 the internet. In the future though this will be replaced by something
 from the Ruby platform which will make execution from different OSs
-more common.
+more cross platform. Bear with me for the momment!
 
 To insert loads of data to your database, you will need to do two
 things:
