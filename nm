@@ -1,5 +1,5 @@
-#!/usr/bin/ruby
-
+#!/usr/bin/ruby -w
+$VERSION = "0.1"
 =begin
   author:  Simon Symeonidis
   contact: lethaljellybean@gmail.com
@@ -23,16 +23,21 @@
 
    TODO
    Some commands that might be worth implementing: 
+     o dateo      : oracle date input 
      o Space      : a command to create a blank space
+     
+     !!High Priority!!
      o TIMES      : This will be a command that preparses the given commands automatically
                     The user can say for example 5TIMES list=g,c,t,a and that would make
                   the script preparse the command to list=g,c,t,a list=g,c,t,a list= ...
 
                       This might take some time, but we'll see when I implement it.
-     o ID         : must be a unique id
+     o id         : must be a unique id (this might be a little silly. We'll see)
      o Shell      : in the future, see how much time it would take in order to turn
                     this program into something which acts more like a shell...
    DONE 
+     o time       : mysql like time
+     o date       : mysql date input
      o alpha      : return random a-z character 
      o ALPHA      : return random A-Z character
      o num        : return random number 0->9
@@ -52,25 +57,41 @@
                     for example year generation could be of the form
                   
   -----------------------------------------------------------------------------
-
+  NOTE
+    You might notice some parts where there is Array[rand(num)]
+    In Ruby 1.9.x you can simply use Array.sample, however, 1.9 is a little
+    new for the momment. I'm going to keep this the old fashioned way until
+    Ruby 1.9 is a little more standard.
+  -----------------------------------------------------------------------------
   Special thanks to Paul Smelser for suggestions / breaking the script!
 =end
 
 # Pre-script executions check
 #   If nothing specified, stab user in the face, multiple times.
 if ARGV.empty? then exit end
+#   If the user asks for the version
+if !ARGV.grep(/version/).empty? 
+  puts "Solonely #{$VERSION}"; 
+  exit 
+end
+
 
 ##
 ## Check for special fields such as the XTIMES
 ##
+
+if !ARGV.grep(/times/).empty?
+  puts " contains times"
+end
 
 ##
 ## Start important variables
 ##
 
 # This hash is used in order to handle "RANGE" requests.
-rangeHash      = Hash.new # initiate hash
-rangeHashID    = 0        # the hashid to look for later
+id             = 0         # to have unique / autoincrement like keys
+rangeHash      = Hash.new  # initiate hash
+rangeHashID    = 0         # the hashid to look for later
 
 # These are local files
 prefix = "dat/"
@@ -147,7 +168,7 @@ if ARGV[0].downcase == "help"
   puts " Time to Annihilation: " + ( Time.utc(2011, "dec", 31, 23,59,59).to_i - Time.now.to_i ).to_s + " seconds remaining"
   exit 
 end
-
+if !File.directory? "dat" then FileUtils.mkdir 'dat' end
 if !File.exists?(prefix + $file_names)
   print "The #{$file_names} could not be found. Should I fetch it? [Y/n] : "
   c=$stdin.gets.chomp
@@ -180,21 +201,20 @@ end
 fnames    = File.open("#{prefix}#{$file_names}", "r") 
 fsurnames = File.open("#{prefix}#{$file_surnames}", "r")
 fwords    = File.open("#{prefix}#{$file_words}", "r") # lol, fwords
-id = Array.new # TODO might have to go
 
 # We just put these here because we don't want to load the files if the arguments are entered wrong
 # TODO Should I ever choose to optimize this, then it would be a wise idea to read the file in chunks
 #      rather than in lines...
 names    =    fnames.readlines if ARGV.include?("name")    # Here for optimization
 surnames = fsurnames.readlines if ARGV.include?("surname") # Here for optimization
-words    =    fwords.readlines if ARGV.include?("address") or ARGV.grep /word/
+words    =    fwords.readlines if ARGV.include?("address") or ARGV.grep(/word/)
 
 # Normalization of data here. We remove the newlines, and make sure that each
 # name is capitalized properly.
 
 names.each_index    { |x| names[x]    = names[x].gsub("\n", "").capitalize  }   if ARGV.include?("name")
 surnames.each_index { |x| surnames[x] = surnames[x].gsub("\n", "").capitalize } if ARGV.include?("surname")
-words.each_index    { |x| words[x]    = words[x].gsub("\r\n", "")} if ARGV.grep /word/ or ARGV.include?("address")
+words.each_index    { |x| words[x]    = words[x].gsub("\r\n", "")} if ARGV.grep(/word/) or ARGV.include?("address")
 
 # Now just an extra rule for the delimiters...
 
@@ -236,13 +256,14 @@ ARGV[0].to_i.times {
   ARGV.each_index { |x| 
   
   if x > 2 then 
-    if ARGV[x] == "id"
-      tmpid = (rand(8000000) + 1000000).to_s
-      $final_result += tmpid
-    elsif ARGV[x] == "surname"
+  case ARGV[x]
+    when "id"
+      $final_result += id.to_s 
+      id += 1
+    when "surname"
       tmpst = surnames[rand(surnames.size)]
       $final_result += tmpst
-    elsif ARGV[x] == "address"
+    when "address"
       tmpst = words[rand(words.size)].capitalize + " " + words[rand(words.size)].capitalize + " "
       case rand(9)
         when 0 then tmpst += "Ave."
@@ -256,44 +277,51 @@ ARGV[0].to_i.times {
         when 8 then tmpst += "Blvd"
       end
       $final_result += tmpst
-    elsif ARGV[x] == "name"
+    when "name"
       $final_result += names[rand(names.size)]
-    elsif ARGV[x] == "post"
+    when "post"
       $final_result += (65 + rand(26)).chr + rand(9).to_s + (65 + rand(26)).chr + rand(9).to_s + (65 + rand(26)).chr + rand(9).to_s
-    elsif ARGV[x] == "age"
+    when "age"
       $final_result += (rand(40) + 14).to_s
-    elsif ARGV[x] == "phone"
+    when "phone"
       $final_result += (100+rand(899)).to_s + "-" + ("%04d" % rand(9999))
-    elsif ARGV[x] == "alpha"
+    when "alpha"
       $final_result += (97 + rand(26)).chr
-    elsif ARGV[x] == "ALPHA"
+    when "ALPHA"
       $final_result += (65 + rand(26)).chr
-    elsif ARGV[x] == "num"
+    when "num"
       $final_result += (rand(10)).to_s # 0 -> 9
-    elsif ARGV[x] =~ /word/
+    when "date"
+      month = rand(12) + 1
+      t = Time.utc(1970+rand(500), month, 1+rand(31), 1+rand(23),rand(60),rand(60)) 
+      $final_result += t.year.to_s + "-" + "%02d" % t.mon + "-" + "%02d" % t.day
+    when "time"
+      t = Time.utc(1970+rand(500), month, 1+rand(31), 1+rand(23),rand(60),rand(60)) 
+      $final_result += t.hour.to_s + ":" +  t.min.to_s + ":" +  t.sec.to_s
+    when /word/
       w = ARGV[x]
       n = w.to_i
       (n == 0 ? 1 : n).times{ $final_result += words[rand(words.length)] + " " }
-    elsif ARGV[x] =~ /range/ # TODO operation time sucks ass. Need to improve
+    when /range/ 
       expression = rangeHash[ARGV[x]] 
       exp = expression.split('X')
       $final_result += (rand(exp[1].to_i + 1) + exp[0].to_i).to_s
-    elsif ARGV[x] =~ /list/
+    when /list/
       l = ARGV[x]
       l = l.gsub(/list/, '')
       l = l.gsub(/=/, '')
       la= l.split(',')
       $final_result += la.sample
-    elsif ARGV[x] =~ /man/
+    when /man/
       l = ARGV[x]
       l = l.gsub(/man/, '')
       l = l.gsub(/=/, '')
       $final_result += l
-    elsif ARGV[x] == "back"
+    when "back"
       2.times { $final_result.chop! }
-    elsif ARGV[x] == "nodelim"
+    when "nodelim"
       nodelim = true
-    end 
+  end # end the big case!
    
     if x < ARGV.length - 1
        $final_result += ARGV[1]
@@ -310,4 +338,6 @@ ARGV[0].to_i.times {
   
 }
 
+# this has to go ?
+# Have to think this over...
 print $final_result
