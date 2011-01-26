@@ -1,0 +1,6 @@
+Bug issues
+---------------------------------------------
+Tue Jan 25 19:25:34 EST 2011\
+---------------------------------------------
+  o man=man gives nothing (this might be the
+    case for many)
