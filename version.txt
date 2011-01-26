@@ -18,10 +18,23 @@ versatile enough so that other people who
 wish to use it in order to poppulate 
 databases do not have the same trouble as I
 have
-
+=============================================
+Stuff that needs fixing
+---------------------------------------------
+  o null 
+  o space
+=============================================
+Wed Jan 26 02:59:54 EST 2011
+v 0.1.1
+---------------------------------------------
+  o Added null token command  [Unstable]
+  o Added space token command [Unstable]
+  o Write to file/print to screen option
+    (this should increase performance 
+     somewhat).
 =============================================
 Tue Jan 25 06:31:26 EST 2011
-version 0.1 - Features, bugfixes
+v 0.1.0 - Features, bugfixes
 ---------------------------------------------
   o Script creates dat/ if not present
   o code clutter removed (elsif -> case/when)

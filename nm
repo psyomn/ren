@@ -25,6 +25,7 @@ $VERSION = "0.1"
    Some commands that might be worth implementing: 
      o dateo      : oracle date input 
      o Space      : a command to create a blank space
+     o null       : for null tokens
      
      !!High Priority!!
      o TIMES      : This will be a command that preparses the given commands automatically
@@ -163,6 +164,8 @@ if ARGV[0].downcase == "help"
   puts " - ALPHA   : random character A to Z"
   puts " - man     : manual entry of whatever you like"
   puts " - nodelim : this ignores putting a delimiter. You can use this to combine different commands: 100range200 nodelim 300range400"
+  puts " - space   : [UNSTABLE] inserts whitespaces before/after tokens "
+  puts " - null    : [UNSTABLE] inserts a null token "
   puts " - -"
   puts "\n --== author : psyomn, 2011 ==-- \n"
   puts " Time to Annihilation: " + ( Time.utc(2011, "dec", 31, 23,59,59).to_i - Time.now.to_i ).to_s + " seconds remaining"
@@ -251,6 +254,8 @@ ARGV.each_index { |d|
 #  in a future release the ridiculous if statements will
 #  go away.
 
+$delim2 = ARGV[1]
+
 ARGV[0].to_i.times {
 
   ARGV.each_index { |x| 
@@ -298,6 +303,11 @@ ARGV[0].to_i.times {
     when "time"
       t = Time.utc(1970+rand(500), month, 1+rand(31), 1+rand(23),rand(60),rand(60)) 
       $final_result += t.hour.to_s + ":" +  t.min.to_s + ":" +  t.sec.to_s
+    when "space" # TODO
+      $final_result += "  " 
+      nodelim = true
+    when "null"  # TODO
+      $final_result += $delim2 
     when /word/
       w = ARGV[x]
       n = w.to_i
@@ -338,6 +348,16 @@ ARGV[0].to_i.times {
   
 }
 
-# this has to go ?
-# Have to think this over...
-print $final_result
+puts "You can now : "
+puts "  [1] Print to screen "
+puts "  [2] Write to file   "
+print "choice : "
+ch = $stdin.gets.to_i
+
+case ch
+  when 1 then print $final_result
+  when 2 
+    File.open("out", "w") {|w| w.write($final_result)}
+end
+
+# 
