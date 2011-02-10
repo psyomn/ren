@@ -22,6 +22,15 @@ $VERSION = "0.1"
    delimiter for rows is \n
 
    TODO
+
+   --
+ 
+   Think about a filescheme that will make some script run and automatically
+	populate all the databases. This may be done by starting a file with a 
+	specific comment for example
+
+	--
+
    Some commands that might be worth implementing: 
      o dateo      : oracle date input 
      o Space      : a command to create a blank space
@@ -91,6 +100,8 @@ end
 
 # This hash is used in order to handle "RANGE" requests.
 id             = 0         # to have unique / autoincrement like keys
+rid            = 0         # to have unique / random like keys
+ridHash        = Hash.new  # to make sure nothing clashes later
 rangeHash      = Hash.new  # initiate hash
 rangeHashID    = 0         # the hashid to look for later
 
@@ -265,7 +276,9 @@ ARGV[0].to_i.times {
     when "id"
       $final_result += id.to_s 
       id += 1
-    when "surname"
+	 when "rid"
+      # TODO
+	 when "surname"
       tmpst = surnames[rand(surnames.size)]
       $final_result += tmpst
     when "address"
@@ -311,7 +324,7 @@ ARGV[0].to_i.times {
     when /word/
       w = ARGV[x]
       n = w.to_i
-      (n == 0 ? 1 : n).times{ $final_result += words[rand(words.length)] + " " }
+      (n == 0 ? 1 : n).times{ $final_result += words[rand(words.length)] }
     when /range/ 
       expression = rangeHash[ARGV[x]] 
       exp = expression.split('X')
