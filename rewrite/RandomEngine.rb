@@ -29,11 +29,12 @@ class RandomEngine
 		print "\b\b\b\b\b\b[DONE]\n"
 		# Load words
 		print "Loading Words    ... [BUSY]"
-		@mSurnames = (File.open("dat/words.dat.txt").read.capitalize).split(/\n/)
+		@mWords = (File.open("dat/words.dat.txt").read.capitalize).split(/\n\r/)
 		print "\b\b\b\b\b\b[DONE]\n"
 		@mDelim1 = " "
 		@mDelim2 = "\n"
 
+		# Strictly here in order to have the urls to locate the files
 		@mMaleNameLocation   = "Witte"
 		@nFemaleNameLocation = "is"
 		@mDictionaryLocation = "a wanker"
@@ -81,17 +82,24 @@ class RandomEngine
 	def execute(val)
 		@mResult = ""
 		commandParser(val)
-		
+
 		addressArr = ["Ave.","St.","Way","Cir","Dr","Rd","Ct","Trl","Blvd"]
 		@mIterations.times {		
 			@mCommand.split.each{ |option|
+
+				nodelim = false
+				
 				case option
 					when "id" # TODO
+						# ...
 					when "rid" # TODO 
-					when "surname" # TODO
+						# ...
+					when "surname" 
+						@mResult += @mSurnames.sample
 					when "address" 
-						@mResult += words[rand(words.size)].capitalize + " " + words[rand(words.size)].capitalize + " " + addressArr.sample
-					when "name" #TODO
+						@mResult += @mWords.sample.capitalize + " " + @mWords.sample.capitalize + " " + addressArr.sample
+					when "name" 
+						@mResult += @mNames.sample.capitalize
 					when "post"
 						@mResult += (65 + rand(26)).chr + rand(9).to_s + (65 + rand(26)).chr + rand(9).to_s + (65 + rand(26)).chr + rand(9).to_s
 					when "age"
@@ -136,13 +144,18 @@ class RandomEngine
 					when "back"
 						2.times { @mResult.chop! }
 					when "nodelim"
+						p 'nodelim when' 
 						nodelim = true
 				end # end the big case!
 	
-				@mResult += @mDelim1
-			}
+				if nodelim == true # nodelim false = add delim
+					puts "DERP"	
+				else
+					@mResult += @mDelim1 
+				end
+			} # end per field
 			@mResult += @mDelim2
-		}
+		} # end per row
 	end
 
 	# Make sure to clear the results
