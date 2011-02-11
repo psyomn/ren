@@ -29,7 +29,7 @@ class RandomEngine
 		print "\b\b\b\b\b\b[DONE]\n"
 		# Load words
 		print "Loading Words    ... [BUSY]"
-		@mWords = (File.open("dat/words.dat.txt").read.capitalize).split(/\n\r/)
+		@mWords = (File.open("dat/words.dat.txt").read.capitalize).split(/\r\n/)
 		print "\b\b\b\b\b\b[DONE]\n"
 		@mDelim1 = " "
 		@mDelim2 = "\n"
@@ -125,8 +125,8 @@ class RandomEngine
 					when "null"  # TODO
 						#@mResult += $delim2 
 					when /word/
-						# (n == 0 ? 1 : n).times{ @mResult += words[rand(words.length)] }
-					when /range/ 
+						(option.to_i == 0 ? 1 : option_to_i).times{ @mResult += @mWords.sample }
+					when /range/ # TODO 
 						# expression = rangeHash[ARGV[x]] 
 						# exp = expression.split('X')
 						# @mResult += (rand(exp[1].to_i + 1) + exp[0].to_i).to_s
@@ -144,23 +144,32 @@ class RandomEngine
 					when "back"
 						2.times { @mResult.chop! }
 					when "nodelim"
-						p 'nodelim when' 
 						nodelim = true
 				end # end the big case!
 	
-				if nodelim == true # nodelim false = add delim
-					puts "DERP"	
-				else
-					@mResult += @mDelim1 
+				@mResult += @mDelim1 
+				
+				if nodelim
+					# chop the delim1
+					(@mDelim1.length + 1).times{ @mResult.chop! }
 				end
 			} # end per field
+
+			# need to chop the extra delim1
+			(@mDelim1.length).times{ @mResult.chop! }
 			@mResult += @mDelim2
+
 		} # end per row
 	end
 
 	# Make sure to clear the results
 	def clearResult
 		@mResult.clear
+	end
+
+	# Simple definition to write out the results
+	def writeOut
+		File.open("out").write(@mResult)
 	end
 
 private
@@ -174,7 +183,7 @@ private
 		cm[0] = cm[0].to_i
 		raise "First option must be positive num" if cm[0] < 1
 
-		@mIterations = cm[0].to_i
+		@mIterations = cm[0]
 
 		cm.delete_at(0)
 
