@@ -35,9 +35,9 @@ class RandomEngine
 		@mDelim2 = "\n"
 
 		# Strictly here in order to have the urls to locate the files
-		@mMaleNameLocation   = "Witte"
-		@nFemaleNameLocation = "is"
-		@mDictionaryLocation = "a wanker"
+		@mMaleNameLocation   = ""
+		@nFemaleNameLocation = ""
+		@mDictionaryLocation = ""
 
 		@mResult = ""
 		@mCommand = ""
@@ -169,7 +169,7 @@ class RandomEngine
 
 	# Simple definition to write out the results
 	def writeOut
-		File.open("out").write(@mResult)
+		File.open("out", "w").write(@mResult)
 	end
 
 private
