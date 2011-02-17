@@ -2,7 +2,9 @@
 # License:: GPL v3
 # Class for handling loading and randomization
 
-class RandomEngine 
+require_relative 'LonelyExceptions.rb'
+ 
+class RandomEngine < LonelyExceptions
 	
 	attr_accessor :mNames 
 	attr_accessor :mSurnames 
@@ -179,9 +181,9 @@ private
 		@mCommand = ""
 		cm = cm.split	
 	
-		raise "Command has no options " if cm.size == 0
+		raise Exception, "Command has no options" if cm.size == 0
 		cm[0] = cm[0].to_i
-		raise "First option must be positive num" if cm[0] < 1
+		raise Exception, "First number must be positive integer" if cm[0] < 1 and cm[0].is_a? Integer
 
 		@mIterations = cm[0]
 

@@ -98,8 +98,6 @@
 				
 					<li class="file"><a href="./issues_txt.html">issues.txt</a></li>
 				
-					<li class="file"><a href="./numbers_txt.html">numbers.txt</a></li>
-				
 					<li class="file"><a href="./version_txt.html">version.txt</a></li>
 				
 				</ul>
@@ -120,6 +118,10 @@
 				</form>
 
 				<ul class="link-list">
+				
+					<li><a href="./Mingler.html">Mingler</a></li>
+				
+					<li><a href="./MySQLGenerator.html">MySQLGenerator</a></li>
 				
 					<li><a href="./RandomEngine.html">RandomEngine</a></li>
 				
@@ -391,9 +393,9 @@ Load all the needed files for randomization
 35:                 <span class="ruby-ivar">@mDelim2</span> = <span class="ruby-value str">&quot;\n&quot;</span>
 36: 
 37:                 <span class="ruby-comment cmt"># Strictly here in order to have the urls to locate the files</span>
-38:                 <span class="ruby-ivar">@mMaleNameLocation</span>   = <span class="ruby-value str">&quot;Witte&quot;</span>
-39:                 <span class="ruby-ivar">@nFemaleNameLocation</span> = <span class="ruby-value str">&quot;is&quot;</span>
-40:                 <span class="ruby-ivar">@mDictionaryLocation</span> = <span class="ruby-value str">&quot;a wanker&quot;</span>
+38:                 <span class="ruby-ivar">@mMaleNameLocation</span>   = <span class="ruby-value str">&quot;&quot;</span>
+39:                 <span class="ruby-ivar">@nFemaleNameLocation</span> = <span class="ruby-value str">&quot;&quot;</span>
+40:                 <span class="ruby-ivar">@mDictionaryLocation</span> = <span class="ruby-value str">&quot;&quot;</span>
 41: 
 42:                 <span class="ruby-ivar">@mResult</span> = <span class="ruby-value str">&quot;&quot;</span>
 43:                 <span class="ruby-ivar">@mCommand</span> = <span class="ruby-value str">&quot;&quot;</span>
@@ -628,7 +630,7 @@ Simple definition to write out the results
 <pre>
      <span class="ruby-comment cmt"># File RandomEngine.rb, line 171</span>
 171:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">writeOut</span>
-172:                 <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-value str">&quot;out&quot;</span>).<span class="ruby-identifier">write</span>(<span class="ruby-ivar">@mResult</span>)
+172:                 <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-value str">&quot;out&quot;</span>, <span class="ruby-value str">&quot;w&quot;</span>).<span class="ruby-identifier">write</span>(<span class="ruby-ivar">@mResult</span>)
 173:         <span class="ruby-keyword kw">end</span></pre>
 					</div>
 					
