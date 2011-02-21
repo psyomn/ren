@@ -1,5 +1,5 @@
 # Author:: Simon Symeonidis (mailto:psyomn@xenagoras.net)
-# Copyright:: GPL v3
+# License:: GPL v3
 # The strict purpose of this class is to read different output files with delimited information
 # and generate other such files. 
 # The user is expected to handle much of this on his or her own.
@@ -9,5 +9,22 @@
 # and finally generate an output file as well.
 
 class Mingler
+public
 
+	# A command line interface to the class
+	def commandInterface
+		isfinished = false
+		cmd = "" 
+
+		while !isfinished do
+			print "min::"
+			cmd = $stdin.gets.chomp!
+			case cmd
+				when /end|exit|quit/i then isfinished = true 
+			end
+		end
+	end
+private
+	
+protected
 end
