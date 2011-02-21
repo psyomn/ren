@@ -4,13 +4,15 @@
 
 # TODO add  times  [ ]  capability
 
-require_relative 'RandomEngine.rb'
+require_relative 'RandomEngine.rb' # Random Gen Class
+require_relative 'Mingler.rb'      # Mingle different output files
 
-$VERSION = 1;
+$VERSION = 1.1;
 
 finished = false
 
 ren = RandomEngine.new
+min = Mingler.new
 cmd  = ""
 
 while !finished do
@@ -23,7 +25,9 @@ while !finished do
 		when "random"
 			ren.commandInterface # access the interface
 		when "mingle"
-			# ...
+			min.commandInterface # access the interface
+		when "version"
+			puts "Version: " + $VERSION.to_s
 		else
 			puts "default"
 	end

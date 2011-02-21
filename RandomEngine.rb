@@ -19,8 +19,12 @@ class RandomEngine < LonelyExceptions
 	attr_reader :mFemaleNameLocation
 	attr_reader :mDictionaryLocation
 
+public
 	# Load all the needed files for randomization
 	def initialize
+		
+		check
+		
 		# Load names
 		print "Loading Names    ... [BUSY]"
 		@mNames = (File.open("dat/name.dat.txt").read.capitalize).split(/\n/)
@@ -83,6 +87,8 @@ class RandomEngine < LonelyExceptions
  	# for special cases as times
 	def execute(val)
 		@mResult = ""
+		id = 0
+		rid = Hash.new
 		commandParser(val)
 
 		addressArr = ["Ave.","St.","Way","Cir","Dr","Rd","Ct","Trl","Blvd"]
@@ -93,9 +99,14 @@ class RandomEngine < LonelyExceptions
 				
 				case option
 					when "id" # TODO
-						# ...
-					when "rid" # TODO 
-						# ...
+						@mResult += id.to_s
+					when "rid" # This method might be a bit slow. Recheck in the future. 
+						tmp = 0
+						while rid[tmp] != true do
+							tmp = rand(4000000000) # Assuming that rid is a standard int
+							rid[tmp] = true
+						end
+						@mResult += tmp.to_s
 					when "surname" 
 						@mResult += @mSurnames.sample
 					when "address" 
@@ -125,13 +136,17 @@ class RandomEngine < LonelyExceptions
 						@mResult += "  " 
 						nodelim = true
 					when "null"  # TODO
-						#@mResult += $delim2 
+						@mResult += @mDelim2 
 					when /word/
 						(option.to_i == 0 ? 1 : option_to_i).times{ @mResult += @mWords.sample }
 					when /range/ # TODO 
-						# expression = rangeHash[ARGV[x]] 
-						# exp = expression.split('X')
-						# @mResult += (rand(exp[1].to_i + 1) + exp[0].to_i).to_s
+						# We calculate the offset
+						exp = option.split(/range/i)
+						exp[0] = exp[0].to_i
+						exp[1] = exp[1].to_i
+						x = [exp[0], exp[1]].max + 1
+						y = [exp[0], exp[1]].min - 1
+						@mResult += (rand(x-y)+y).to_s
 					when /list/
 						@mResult += option.gsub(/list/, '').gsub(/=/, '').split(',').sample
 					when /man/
@@ -163,8 +178,8 @@ class RandomEngine < LonelyExceptions
 	end
 
 	# Simple definition to write out the results
-	def writeOut
-		File.open("out", "w").write(@mResult)
+	def writeOut(fname="out")
+		File.open(fname, "w").write(@mResult)
 	end
 
 	# This method provides a command-line interface to the class
@@ -184,10 +199,12 @@ class RandomEngine < LonelyExceptions
 					print "Set delim 2: " # TODO Handle Newline
 					@mDelim2 = $stdin.gets.chomp!
 				when "writeout"
-					writeOut
+					print "Filename : "
+					filename = $stdin.gets.chomp!
+					writeOut(filename)
 				else
 					execute(cmd)
-					puts ren.mResult
+					puts @mResult
 			end
 		end
 	end
@@ -220,8 +237,50 @@ private
 		}
 	end
 
-	# Definition to download files
-	def downloadFile
+	# Check if files exist.
+	# 1) check if folder dat exists
+	# 2) check if the other files exist
+	# 		- name.dat.txt
+	#		- surname.dat.txt
+	#		- words.dat.txt
+	def check
+		if !File.directory? "dat" then FileUtils.mkdir 'dat' end
+		if !File.exists? "dat/name.dat.txt"     then download('names') end
+		if !File.exists? "dat/surnames.dat.txt" then download('surnames') end
+		if !File.exists? "dat/words.dat.txt"    then download('words') end
+	end
+
+	# Definition to download files. This handles fetching of the data files
+	# if they are missing. 
+	# - Names are two files, one for males, one for females. They are downloaded
+	#   separately and merged
+	# - The rest is normal. 
+	def download(f)
+		http_names_m  = "http://www.census.gov/genealogy/names/dist.male.first"
+		http_names_f  = "http://www.census.gov/genealogy/names/dist.female.first"
+		http_surnames = "http://www.census.gov/genealogy/names/dist.all.last"
+		http_words    = "http://www.mieliestronk.com/corncob_lowercase.zip"
+
+		case f
+			when 'names'
+				print "Downloading names    ... [BUSY]"
+				
+				print "\b\b\b\b\b\b[DONE]\n"
+			when 'surnames'
+				print "Downloading surnames ... [BUSY]"
+				
+				print "\b\b\b\b\b\b[DONE]\n"
+			when 'words'
+				print "Downloading words    ... [BUSY]"
+				
+				print "\b\b\b\b\b\b[DONE]\n"
+		end
+	end
+
+	# Definition to unzip zippped files. This might be needed
+	# with files which are downloaded but zipped.
+	def unzip(fname)
+		
 	end
 
 end
