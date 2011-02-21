@@ -133,16 +133,9 @@ class RandomEngine < LonelyExceptions
 						# exp = expression.split('X')
 						# @mResult += (rand(exp[1].to_i + 1) + exp[0].to_i).to_s
 					when /list/
-						l = option 
-						l = l.gsub(/list/, '')
-						l = l.gsub(/=/, '')
-						la= l.split(',')
-						@mResult += la.sample
+						@mResult += option.gsub(/list/, '').gsub(/=/, '').split(',').sample
 					when /man/
-						l = option
-						l = l.gsub(/man/, '')
-						l = l.gsub(/=/, '')
-						@mResult += l
+						@mResult += option.gsub(/man/, '').gsub(/=/, '')
 					when "back"
 						2.times { @mResult.chop! }
 					when "nodelim"
@@ -158,7 +151,7 @@ class RandomEngine < LonelyExceptions
 			} # end per field
 
 			# need to chop the extra delim1
-			(@mDelim1.length).times{ @mResult.chop! }
+			@mDelim1.length.times{ @mResult.chop! }
 			@mResult += @mDelim2
 
 		} # end per row
@@ -172,6 +165,31 @@ class RandomEngine < LonelyExceptions
 	# Simple definition to write out the results
 	def writeOut
 		File.open("out", "w").write(@mResult)
+	end
+
+	# This method provides a command-line interface to the class
+	def commandInterface
+		isfinished = false
+		cmd = "" # command placeholder
+
+		while !isfinished do
+			print "ren::"
+			cmd = $stdin.gets.chomp!
+			case cmd 
+				when /end|quit|exit/ then isfinished = true
+				when "setdelim1"
+					print "Set delim 1: " # TODO Handle Newline 
+					@mDelim1 = $stdin.gets.chomp!
+				when "setdelim2"
+					print "Set delim 2: " # TODO Handle Newline
+					@mDelim2 = $stdin.gets.chomp!
+				when "writeout"
+					writeOut
+				else
+					execute(cmd)
+					puts ren.mResult
+			end
+		end
 	end
 
 private

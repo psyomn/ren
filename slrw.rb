@@ -14,27 +14,18 @@ ren = RandomEngine.new
 cmd  = ""
 
 while !finished do
+	print "sol::"
 	cmd = $stdin.gets
 	cmd.chomp!
 
 	case cmd 
 		when /end|quit|exit/ then finished = true
-		when "setdelim1"
-			print "Set delim 1: " # TODO Handle Newline 
-			d1 = $stdin.gets.chomp!
-			ren.mDelim1 = d1
-		when "setdelim2"
-			print "Set delim 2: " # TODO Handle Newline
-			d2 = $stdin.gets.chomp!
-			ren.mDelim2 = d2
-		when "license"
-			puts "GPL v3 license"
-			puts "author: Simon Symeonidis "
-		when "writeout"
-			ren.writeOut
+		when "random"
+			ren.commandInterface # access the interface
+		when "mingle"
+			# ...
 		else
-			ren.execute(cmd)
-			puts ren.mResult
+			puts "default"
 	end
 end
 
