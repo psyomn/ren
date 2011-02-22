@@ -256,7 +256,15 @@ private
 	# - Names are two files, one for males, one for females. They are downloaded
 	#   separately and merged
 	# - The rest is normal. 
+	#
+	# In the future it would be best to create a class with configurations where
+	# all the filenames are stored and altered from there.
 	def download(f)
+		result = ""
+		prefix = "dat/"
+		file_names    = "name.dat.txt"
+		file_surna    = "surnames.dat.txt" 
+		file_words    = "words.dat.txt"
 		http_names_m  = "http://www.census.gov/genealogy/names/dist.male.first"
 		http_names_f  = "http://www.census.gov/genealogy/names/dist.female.first"
 		http_surnames = "http://www.census.gov/genealogy/names/dist.all.last"
@@ -265,23 +273,38 @@ private
 		case f
 			when 'names'
 				print "Downloading names    ... [BUSY]"
-				
+				nm_uri = URI.parse(http_names_m)
+				nf_uri = URI.parse(http_names_f)
+				(open(nm_uri).read + open(nf_uri).read).each_line {|m|
+					result += m.split(/\s+/)[0] + "\n"
+				}
+				File.open(prefix + file_names, "w").write( result )
 				print "\b\b\b\b\b\b[DONE]\n"
 			when 'surnames'
 				print "Downloading surnames ... [BUSY]"
-				
+				sr_uri = URI.parse(http_surnames)
+				(open(sr_uri).read).each_line {|m|
+					result += m.split(/\s+/)[0] + "\n"
+				}
+				File.open(prefix + file_surna, "w").write ( result )
 				print "\b\b\b\b\b\b[DONE]\n"
 			when 'words'
 				print "Downloading words    ... [BUSY]"
-				
+				wr_uri = URI.parse(http_words)
+				# Store the zipfile
+				File.open(prefix + file_words, "w").write(wr_uri.read)
+				unzip(prefix + file_words)
 				print "\b\b\b\b\b\b[DONE]\n"
 		end
 	end
 
 	# Definition to unzip zippped files. This might be needed
 	# with files which are downloaded but zipped.
-	def unzip(fname)
-		
+	def unzip(filelocation)
+		`unzip #{filelocation}`
+		`mv corncob_lowercase.txt dat/`
+		`rm #{filelocation}`
+		`mv dat/corncob_lowercase.txt #{filelocation}`
 	end
 
 end
