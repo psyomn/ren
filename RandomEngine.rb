@@ -2,6 +2,7 @@
 # License:: GPL v3
 # Class for handling loading and randomization
 
+require 'open-uri'
 require_relative 'LonelyExceptions.rb'
  
 class RandomEngine < LonelyExceptions
