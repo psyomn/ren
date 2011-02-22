@@ -28,15 +28,15 @@ public
 		
 		# Load names
 		print "Loading Names    ... [BUSY]"
-		@mNames = (File.open("dat/name.dat.txt").read.capitalize).split(/\n/)
+		@mNames = (File.open("dat/name.dat.txt").read).split(/\n/)
 		print "\b\b\b\b\b\b[DONE]\n"
 		# Load surnames
 		print "Loading Surnames ... [BUSY]"
-		@mSurnames = (File.open("dat/surnames.dat.txt").read.capitalize).split(/\n/)
+		@mSurnames = (File.open("dat/surnames.dat.txt").read).split(/\n/)
 		print "\b\b\b\b\b\b[DONE]\n"
 		# Load words
 		print "Loading Words    ... [BUSY]"
-		@mWords = (File.open("dat/words.dat.txt").read.capitalize).split(/\r\n/)
+		@mWords = (File.open("dat/words.dat.txt").read).split(/\r\n/)
 		print "\b\b\b\b\b\b[DONE]\n"
 		@mDelim1 = " "
 		@mDelim2 = "\n"
@@ -113,7 +113,7 @@ public
 					when "address" 
 						@mResult += @mWords.sample.capitalize + " " + @mWords.sample.capitalize + " " + addressArr.sample
 					when "name" 
-						@mResult += @mNames.sample.capitalize
+						@mResult += @mNames.sample
 					when "post"
 						@mResult += (65 + rand(26)).chr + rand(9).to_s + (65 + rand(26)).chr + rand(9).to_s + (65 + rand(26)).chr + rand(9).to_s
 					when "age"
@@ -276,7 +276,7 @@ private
 				nm_uri = URI.parse(http_names_m)
 				nf_uri = URI.parse(http_names_f)
 				(open(nm_uri).read + open(nf_uri).read).each_line {|m|
-					result += m.split(/\s+/)[0] + "\n"
+					result += m.split(/\s+/)[0].capitalize + "\n"
 				}
 				File.open(prefix + file_names, "w").write( result )
 				print "\b\b\b\b\b\b[DONE]\n"
@@ -284,7 +284,7 @@ private
 				print "Downloading surnames ... [BUSY]"
 				sr_uri = URI.parse(http_surnames)
 				(open(sr_uri).read).each_line {|m|
-					result += m.split(/\s+/)[0] + "\n"
+					result += m.split(/\s+/)[0].capitalize + "\n"
 				}
 				File.open(prefix + file_surna, "w").write ( result )
 				print "\b\b\b\b\b\b[DONE]\n"
@@ -300,6 +300,11 @@ private
 
 	# Definition to unzip zippped files. This might be needed
 	# with files which are downloaded but zipped.
+	# This might not be the best way to go about things since
+	# this is basically passing the problem to the shell. 
+	# I would implement this with some gem or something, but I 
+	# read around and found out that the ones available are not
+	# good at handling zip files.
 	def unzip(filelocation)
 		`unzip #{filelocation}`
 		`mv corncob_lowercase.txt dat/`
