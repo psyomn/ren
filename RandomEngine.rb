@@ -213,29 +213,43 @@ public
 private
 
 	# Preprosses the command to see if special tokens such as 'times' exists
+	# IF 'helps' is found, displays message and exits (which is handled by 
+	# the private method helps).
 	def commandParser(cm)
 		@mCommand = ""
-		cm = cm.split	
+		cm = cm.split
+		continue_def = true
+
+		if cm.include? "help"
+			helps
+			continue_def = false
+		end
+		
+		if continue_def
+			raise Exception, "Command has no options" if cm.size == 0
+			cm[0] = cm[0].to_i
+			raise Exception, "First number must be positive integer" if cm[0] < 1 and cm[0].is_a? Integer
 	
-		raise Exception, "Command has no options" if cm.size == 0
-		cm[0] = cm[0].to_i
-		raise Exception, "First number must be positive integer" if cm[0] < 1 and cm[0].is_a? Integer
-
-		@mIterations = cm[0]
-
-		cm.delete_at(0)
-
-		cm.each_index{ |token_index|
-			if cm[token_index] =~ /times/
-				if cm.size > token_index+1
-					(cm[token_index].to_i - 1).times{ 
-						@mCommand += cm[token_index+1] + " "
-					}
+			@mIterations = cm[0]
+	
+			cm.delete_at(0)
+	
+			cm.each_index{ |token_index|
+				if cm[token_index] =~ /times/
+					if cm.size > token_index+1
+						(cm[token_index].to_i - 1).times{ 
+							@mCommand += cm[token_index+1] + " "
+						}
+					end
+				else
+					@mCommand += cm[token_index].to_s + " "
 				end
-			else
-				@mCommand += cm[token_index].to_s + " "
-			end
-		}
+			}
+		end
+	end
+
+	def helps
+		puts "DERP"	
 	end
 
 	# Check if files exist.
