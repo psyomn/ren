@@ -248,8 +248,32 @@ private
 		end
 	end
 
+	# Simple definition to print out possible arguments. This separates 
+	# the 'dull' code :P.
 	def helps
-		puts "DERP"	
+		puts "id - unique incrementing number"
+		puts "rid - unique random interger"
+		puts "surname - surname from the list"
+		puts "name - name from the list"
+		puts "post - montreal like post code"
+		puts "age - age from 14 to 54"
+		puts "phone - random phone XXX-XXXX"
+		puts "alpha - random lowercase character"
+		puts "ALPHA - random uppercase character"
+		puts "num - random numner 0->9"
+		puts "date - random date"
+		puts "time - random time"
+		puts "space - [unstable] adds a space"
+		puts "null - [unstable] adds null token"
+		puts "word - random word from list"
+		puts "range - random range from x to y. Use like this: 12range40"
+		puts "list - random selection from a list. Use like this: list=a,v,word,1,4"
+		puts "man - manual entry. Use like this: man=1234"
+		puts "back - a backspace. Use with words"
+		puts "nodelim - no delimiter to join two options"
+		puts "times - an option x times eg: 10times man=1234"
+		puts "  Command Format: "
+		puts "    10 10times man=1234 name surname"
 	end
 
 	# Check if files exist.
