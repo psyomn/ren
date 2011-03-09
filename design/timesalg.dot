@@ -1,0 +1,25 @@
+digraph hierarchy {
+	Begin
+	1 [label="Times is found"] 
+	2 [label="Try to look forward"] 
+	3 [label="Next token has ["] 
+	4 [label="Next token hasn't ["] 
+	5 [label="Repeat concatenation xtimes"] 
+	6 [label="done"]
+	Terminate
+	A [label="Add next token if not ]"] 
+	B [label="replace ARGV with token"] 
+
+	Begin->1
+	1->2
+	2->3
+	3->4
+	4->5
+	5->6
+	6->1
+	6->Terminate
+	3->A
+	A->A
+	A->B
+	B->5
+}
