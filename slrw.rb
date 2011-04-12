@@ -1,3 +1,4 @@
+#!/usr/bin/ruby
 # Main interface for the database poppulator
 # Author:: Simon Symeonidis (mailto:psyomn@xenagoras.net)
 # License:: GPL v3

@@ -215,6 +215,8 @@ private
 	# Preprosses the command to see if special tokens such as 'times' exists
 	# IF 'helps' is found, displays message and exits (which is handled by 
 	# the private method helps).
+	# It also takes care of square brackets [ ] when used with 'times' 
+	#   Example : 10times [ name surname address ] 2times [ word ]
 	def commandParser(cm)
 		@mCommand = ""
 		cm = cm.split
@@ -224,7 +226,9 @@ private
 			helps
 			continue_def = false
 		end
-		
+	
+		if !parCheck(cm.join) then continue_def = false end
+
 		if continue_def
 			raise Exception, "Command has no options" if cm.size == 0
 			cm[0] = cm[0].to_i
@@ -246,6 +250,19 @@ private
 				end
 			}
 		end
+	end
+
+	# Returns true or false whether there are the right amount of parenthesis
+	# in the command.
+	def parCheck(cm)
+		count = 0
+		cm.chars{ |x|
+			case x
+				when '[' then count += 1 
+				when ']' then count -= 1
+			end
+		}
+		return count == 0
 	end
 
 	# Simple definition to print out possible arguments. This separates 

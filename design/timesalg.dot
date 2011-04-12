@@ -1,14 +1,14 @@
 digraph hierarchy {
 	Begin
-	1 [label="Times is found"] 
-	2 [label="Try to look forward"] 
-	3 [label="Next token has ["] 
-	4 [label="Next token hasn't ["] 
-	5 [label="Repeat concatenation xtimes"] 
-	6 [label="done"]
+	1 [shape=rectangle label="Times is found"] 
+	2 [shape=rectangle label="Try to look forward"] 
+	3 [shape=rectangle label="Next token has ["] 
+	4 [shape=rectangle label="Next token hasn't ["] 
+	5 [shape=rectangle label="Repeat concatenation xtimes"] 
+	6 [shape=rectangle label="done"]
 	Terminate
-	A [label="Add next token if not ]"] 
-	B [label="replace ARGV with token"] 
+	A [shape=rectangle label="Add next token if not ]"] 
+	B [shape=rectangle label="replace ARGV with token"] 
 
 	Begin->1
 	1->2
