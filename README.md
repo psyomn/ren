@@ -52,6 +52,3 @@ things:
 	Which triggers the debug mode and stores the sql queries in a separate
 	file called log.sql.
 	
-Gracias!
--------------------------------
-Thanks to Paul Smelser for some invaluable input / finding bugs in the script
