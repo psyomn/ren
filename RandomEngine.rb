@@ -3,9 +3,8 @@
 # Class for handling loading and randomization
 
 require 'open-uri'
-require_relative 'LonelyExceptions.rb'
  
-class RandomEngine < LonelyExceptions
+class RandomEngine  
   
   attr_accessor :mNames 
   attr_accessor :mSurnames 
@@ -271,7 +270,7 @@ private
         when '}' then countc -= 1
       end
     }
-    return counts == 0 and countr == 0 and countc == 0
+    return counts == 0 && countr == 0 && countc == 0
   end
 
   # Simple definition to print out possible arguments. This separates 
