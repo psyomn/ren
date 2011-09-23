@@ -8,7 +8,7 @@
 require_relative 'RandomEngine.rb' # Random Gen Class
 require_relative 'Mingler.rb'      # Mingle different output files
 
-$VERSION = 1.1;
+$VERSION = 0.3; 
 
 finished = false
 

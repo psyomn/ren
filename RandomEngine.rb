@@ -216,6 +216,7 @@ private
   # the private method helps).
   # It also takes care of square brackets [ ] when used with 'times' 
   #   Example : 10times [ name surname address ] 2times [ word ]
+  #   Example : 10times [ 10 times [ token ] token token ] 
   def commandParser(cm)
     @mCommand = ""
     cm = cm.split
@@ -231,16 +232,18 @@ private
     if continue_def
       raise Exception, "Command has no options" if cm.size == 0
       cm[0] = cm[0].to_i
-      raise Exception, "First number must be positive integer" if cm[0] < 1 and cm[0].is_a? Integer
+      raise Exception, "First number must be positive integer" if cm[0] < 1 or !cm[0].is_a? Integer
   
       @mIterations = cm[0]
   
       cm.delete_at(0)
+
+      # This needs a rewrite . . . 
   
       cm.each_index{ |token_index|
         if cm[token_index] =~ /times/
           if cm.size > token_index+1
-            (cm[token_index].to_i - 1).times{ 
+            ( cm[token_index].to_i - 1 ).times { 
               @mCommand += cm[token_index+1] + " "
             }
           end
