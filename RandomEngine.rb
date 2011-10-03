@@ -3,6 +3,7 @@
 # Class for handling loading and randomization
 
 require 'open-uri'
+require 'fileutils'
  
 class RandomEngine  
   
@@ -153,7 +154,9 @@ public
             @mResult += option.gsub(/man/, '').gsub(/=/, '')
           when "back"
             2.times { @mResult.chop! }
-          when "nodelim"
+          when "nodelim" 
+            nodelim = true
+          when "%"
             nodelim = true
         end # end the big case!
   
@@ -299,6 +302,7 @@ private
     puts "man - manual entry. Use like this: man=1234"
     puts "back - a backspace. Use with words"
     puts "nodelim - no delimiter to join two options"
+    puts "% - shorthand for nodelim" 
     puts "times - an option x times eg: 10times man=1234"
     puts "  Command Format: "
     puts "    10 10times man=1234 name surname"
